@@ -64,6 +64,8 @@ public class Program {
 			
 			try {
 				pro.buy(quantityProduct);
+
+				System.out.printf("%nPreço a pagar: %.2f",pro.calcTotalPrice(quantityProduct));
 				System.out.printf("%nNova quantidade em estoque: %d",pro.getQuantityStock());
 			} catch (BusinessException e) {
 				System.out.println(e.getMessage());

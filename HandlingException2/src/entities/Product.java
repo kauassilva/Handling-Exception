@@ -65,6 +65,12 @@ public class Product {
 		quantityStock -= quantityProduct;
 	}
 	
+	public double calcTotalPrice(int quantityProduct) {
+		double finalPrice = quantityProduct * getPrice();
+		
+		return finalPrice;
+	}
+	
 	private void validateBuy(int quantityProduct) throws BusinessException {
 		if (quantityProduct > getQuantityStock()) {
 			throw new BusinessException("Erro de compra: Quantidade insuficiente em estoque");
