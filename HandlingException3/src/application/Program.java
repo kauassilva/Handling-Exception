@@ -1,26 +1,36 @@
 /*
  * Exercício 3
  * ----------------------------------------
- * Crie um programa em Java com POO para calcular a média aritmética de um conjunto
- * de números informados pelo usuário. O programa deve solicitar ao usuário quantos
- * números deseja informar e, em seguida, solicitar que o usuário informe cada um 
- * dos números.
- * 
- * No entanto, o programa deve fazer o tratamento de exceções caso o usuário informe
- * um valor inválido, como uma letra ou um caractere especial. Caso isso aconteça, o
- * programa deve informar ao usuário que o valor informado é inválido e solicitar que
- * o usuário informe um novo valor.
- * 
- * Ao final, o programa deve exibir a média aritmética dos números informados pelo usuário.
+ * Crie um sistema que receba um email e uma senha para o cadastro de um usuário,
+ * mas a senha deve conter pelo menos 8 caracteres, entre letras e números.
  */
 
 package application;
+
+import java.util.Scanner;
+
+import entities.Account;
+import exceptions.InvalidPasswordException;
 
 public class Program {
 	
 	public static void main(String[] args) {
 		
-		System.out.println("Primeiro commit");
+		Scanner sc = new Scanner(System.in);
+		
+		System.out.print("Insira um email: ");
+		String email = sc.nextLine();
+		System.out.print("Insira uma senha: ");
+		String password = sc.nextLine();
+		
+		try {
+			Account acc = new Account(email, password);
+			System.out.println("Cadastro efetuado");
+		} catch (InvalidPasswordException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		sc.close();
 		
 	}
 
