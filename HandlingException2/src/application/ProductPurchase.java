@@ -19,10 +19,12 @@
 
 package application;
 
+import java.math.BigDecimal;
 import java.util.Scanner;
 
 import entities.Product;
-import exceptions.BusinessException;
+import exceptions.InsufficientStockException;
+import exceptions.InvalidQuantityException;
 
 public class ProductPurchase {
 
@@ -31,58 +33,56 @@ public class ProductPurchase {
 		Scanner scanner = new Scanner(System.in);
 		Product product = null;
 		
-		System.out.println("Insira os dados do produto");
-		System.out.print("Nome: ");
-		String name = scanner.nextLine();
-		System.out.print("Descrição: ");
-		String description = scanner.nextLine();
-		System.out.print("Preço: ");
-		double price = scanner.nextDouble();
-		System.out.print("Quantidade em estoque: ");
-		int stockQuantity = scanner.nextInt();
-		
 		/*
-		 * Instancia a classe 'Produto' com base nos dados inseridos. Caso o usuário digite
-		 * menor ou igual a 0 (zero) no parâmetro quantityStock, deve retornar uma exceção
-		 * personalizada
+		 * Solicita ao usuário que insira os dados do produto. Em seguida, cria o objeto da classe
+		 * Product e verifica se houve alguma exceção na criação do objeto. Se houver alguma exceção,
+		 * uma mensagem será exibida e o programa será encerrado.
 		 */
 		try {
+			System.out.println("Insira os dados do produto");
+			System.out.print("Nome: ");
+			String name = scanner.nextLine();
+			System.out.print("Descrição: ");
+			String description = scanner.nextLine();
+			System.out.print("Preço: ");
+			BigDecimal price = scanner.nextBigDecimal();
+			System.out.print("Quantidade em estoque: ");
+			int stockQuantity = scanner.nextInt();
+		
 			product = new Product(name, description, price, stockQuantity);
-		} catch (BusinessException e) {
+		} catch (IllegalArgumentException e) {
 			System.out.println(e.getMessage());
+			System.exit(1);
 		}
 		
 		/*
-		 * Solicita ao usuário a quantidade de produtos que deseja comprar e, em seguida,
-		 * chama o método comprar() para atualizar a quantidade em estoque. Se o usuário digitar
-		 * uma quantidade inválida, uma exceção personalizada deverá ser exibida
+		 * Solicita que o usuário informe a quantidade desejada do produto a ser comprado. Se houver
+		 * estoque suficiente para a compra e o valor não for menor ou igual a zero, o preço total 
+		 * da compra é calculado usando o método 'purchase()' e exibido junto com a nova quantidade
+		 * em estoque. Caso contrário, uma exceção é lançada e exibida.
 		 */
 		try {
-			System.out.println();
-			System.out.printf("Quantos %s deseja comprar: ",product.getName());
-			int quantityProduct = scanner.nextInt();
+			System.out.printf("%nQuantos %s deseja comprar: ",product.getName());
+			int purchaseQuantity = scanner.nextInt();
 			
-			try {
-				product.buy(quantityProduct);
+			BigDecimal totalPrice = product.purchase(purchaseQuantity);
 
-				System.out.printf("%nPreço a pagar: %.2f",product.calcTotalPrice(quantityProduct));
-				System.out.printf("%nNova quantidade em estoque: %d",product.getStockQuantity());
-			} catch (BusinessException e) {
-				System.out.println(e.getMessage());
-			}
-		}
-		
-		/* 
-		 * Caso não seja possível instanciar o Produto o sistema não deverá mostrar nada. 
-		 * Ou então, deverá mostrar a exceção NullPointerException
-		 */
+			System.out.printf("%nPreço a pagar: %.2f", totalPrice);
+			System.out.printf("%nNova quantidade em estoque: %d",product.getStockQuantity());
+		} 
+		catch (InsufficientStockException | InvalidQuantityException e) {
+			System.out.println(e.getMessage());
+		} 
 		catch (NullPointerException e) {
-			// Cannot invoke "entities.Product.getName()" because "pro" is null
-			//System.out.println(e.getMessage());
+			System.out.println("O produto não foi inicializado corretamente");
 		}
-		
-		scanner.close();	
+		/*
+		 * Garante que o objeto Scanner seja fechado corretamente, independente do resultado da operação
+		 */
+		finally {
+			scanner.close();				
+		}
 		
 	}
-
+	
 }
